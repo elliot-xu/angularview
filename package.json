@@ -1,0 +1,51 @@
+{
+  "name": "angularview",
+  "displayName": "Angular Component Tree Data View",
+  "description": "a tree data view to show the components with their html, css, spec files",
+  "version": "0.0.1",
+  "publisher": "ms-vscode",
+  "engines": {
+    "vscode": "^1.15.0"
+  }, 
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:angularView.ShowWorkUnit"
+  ],
+  "main": "./out/src/extension",
+  "contributes": {
+    "views": {
+      "explorer": [
+        {
+          "id": "angularView",
+          "name": "Angular View"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "angularView.ShowWorkUnit",
+        "title": "AngularView: Show work unit"
+      },
+      {
+        "command": "angularView.RefreshWorkUnit",
+        "title": "AngularView: Refresh work unit"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "tsc -p ./",
+    "compile": "tsc -watch -p ./",
+    "postinstall": "node ./node_modules/vscode/bin/install",
+    "test": "node ./node_modules/vscode/bin/test"
+  },
+  "devDependencies": {
+    "typescript": "^2.0.3",
+    "vscode": "^1.0.0",
+    "mocha": "^2.3.3",
+    "@types/node": "^6.0.40",
+    "@types/mocha": "^2.2.32",
+    "@types/glob": "^5.0.33"
+  }
+}
