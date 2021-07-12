@@ -1,10 +1,11 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
-import * as glob from 'glob';
+import * as ts from 'typescript';
 
 export class AngularViewDataProvider implements vscode.TreeDataProvider<AngularWorkUnit> {
 
     private readonly pattern: string = '.component.ts';
+
     constructor(
         private rootPath: string
     ) { }
@@ -14,12 +15,14 @@ export class AngularViewDataProvider implements vscode.TreeDataProvider<AngularW
     onDidChangeTreeData: vscode.Event<AngularWorkUnit | undefined> = 
         this._onDidChangeTreeData.event;
     fresh() {
+        // TODO
         this._onDidChangeTreeData.fire();
     }
     getTreeItem(element: AngularWorkUnit): vscode.TreeItem | Thenable<vscode.TreeItem> {
         return element;
     }
     getChildren(element?: AngularWorkUnit): Thenable<AngularWorkUnit[]> {
+        // TODO
         return new Promise(resolve => {
             if (element) {
                 resolve(this.getHtmlAndCss(element));
@@ -36,6 +39,7 @@ export class AngularViewDataProvider implements vscode.TreeDataProvider<AngularW
     }
 
     private getHtmlAndCss(workUnit: AngularWorkUnit): AngularWorkUnit[] {
+        // TODO
         const dirPath = path.dirname(workUnit.fullPath);
         const filter = workUnit.label
             .substring(0, workUnit.label.length - this.pattern.length);

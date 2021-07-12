@@ -1,12 +1,12 @@
 {
-  "name": "angularview",
-  "displayName": "Angular Component Tree Data View",
-  "description": "a tree data view to show the components with their html, css, spec files",
+  "name": "angular-view",
+  "displayName": "angular-view",
+  "description": "a new view to show the combined html, css, spec files of one component",
   "version": "0.0.1",
   "publisher": "ms-vscode",
   "engines": {
-    "vscode": "^1.15.0"
-  }, 
+    "vscode": "^1.51.0"
+  },
   "categories": [
     "Other"
   ],
@@ -35,17 +35,17 @@
     ]
   },
   "scripts": {
-    "vscode:prepublish": "tsc -p ./",
-    "compile": "tsc -watch -p ./",
-    "postinstall": "node ./node_modules/vscode/bin/install",
-    "test": "node ./node_modules/vscode/bin/test"
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "lint": "eslint . --ext .ts,.tsx"
   },
   "devDependencies": {
-    "typescript": "^2.0.3",
-    "vscode": "^1.0.0",
-    "mocha": "^2.3.3",
-    "@types/node": "^6.0.40",
-    "@types/mocha": "^2.2.32",
-    "@types/glob": "^5.0.33"
+    "@types/node": "^12.12.0",
+    "@types/vscode": "^1.51.0",
+    "@typescript-eslint/eslint-plugin": "^4.16.0",
+    "@typescript-eslint/parser": "^4.16.0",
+    "eslint": "^7.21.0",
+    "typescript": "^4.2.2"
   }
 }

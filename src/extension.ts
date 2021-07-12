@@ -3,7 +3,7 @@ import { AngularViewDataProvider } from './angularView';
 
 export function activate(context: vscode.ExtensionContext){
     console.log("myextension is now activate");
-    const rootPath = vscode.workspace.rootPath;
+    const rootPath = vscode.workspace.workspaceFolders || [];
 
     var viewDataProvider = new AngularViewDataProvider(rootPath);
     vscode.window.registerTreeDataProvider('angularView', viewDataProvider);
