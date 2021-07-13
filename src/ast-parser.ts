@@ -2,18 +2,13 @@ import { readFileSync } from "fs";
 import * as ts from "typescript";
 
 export class AstParser {
-
-    readonly printHelper = (sourceFile: ts.SourceFile) => {
-        const p = ts.createPrinter({ newLine: ts.NewLineKind.LineFeed });
-        return (node: ts.Node) => {
-            return p.printNode(ts.EmitHint.Unspecified, node, sourceFile);
-        }
+    constructor() {
     }
 
-    public extractComponentDecorator(fileName: string): ComponentDecorator | undefined {
+    extract(fileName: string, fileContent: string): ComponentDecorator | undefined {
         const sourceFile = ts.createSourceFile(
             fileName,
-            readFileSync(fileName).toString(),
+            fileContent,
             ts.ScriptTarget.ES2015,
             /*setParentNodes */ true
         );
@@ -24,7 +19,7 @@ export class AstParser {
         return metadata.selector ? metadata : undefined;
     }
 
-    traversal(sourceFile: ts.SourceFile, metadata: ComponentDecorator) {
+    private traversal(sourceFile: ts.SourceFile, metadata: ComponentDecorator) {
         traversalNode(sourceFile, metadata);
 
         function parseArgument(nodes: ts.NodeArray<ts.Expression>, metadata: ComponentDecorator) {
@@ -72,6 +67,13 @@ export class AstParser {
                     break;
             }
             ts.forEachChild(node, (n) => traversalNode(n, metadata));
+        }
+    }
+
+    private readonly printHelper = (sourceFile: ts.SourceFile) => {
+        const p = ts.createPrinter({ newLine: ts.NewLineKind.LineFeed });
+        return (node: ts.Node) => {
+            return p.printNode(ts.EmitHint.Unspecified, node, sourceFile);
         }
     }
 }

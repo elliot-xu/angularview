@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
-import { AngularViewDataProvider } from './angularView';
+import { AngularViewDataProvider } from './angular-view-provider';
 
 export function activate(context: vscode.ExtensionContext) {
     console.log("myextension is now activate");
