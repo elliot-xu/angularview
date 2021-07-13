@@ -1,10 +1,12 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
+import * as fs from 'fs';
 import * as ts from 'typescript';
 
 export class AngularViewDataProvider implements vscode.TreeDataProvider<AngularWorkUnit> {
 
     private readonly pattern: string = '.component.ts';
+    private readonly angular_json: string = 'angular.json';
 
     constructor(
         private rootPath: string
@@ -16,44 +18,24 @@ export class AngularViewDataProvider implements vscode.TreeDataProvider<AngularW
         this._onDidChangeTreeData.event;
     fresh() {
         // TODO
-        this._onDidChangeTreeData.fire();
+        throw Error();
     }
     getTreeItem(element: AngularWorkUnit): vscode.TreeItem | Thenable<vscode.TreeItem> {
         return element;
     }
     getChildren(element?: AngularWorkUnit): Thenable<AngularWorkUnit[]> {
         // TODO
-        return new Promise(resolve => {
-            if (element) {
-                resolve(this.getHtmlAndCss(element));
-            } else {
-                resolve(
-                    glob.sync(`${this.rootPath}/**/*${this.pattern}`)
-                        .map(fullPath => new AngularWorkUnit(
-                            path.basename(fullPath),
-                            fullPath,
-                            vscode.TreeItemCollapsibleState.Collapsed)
-                        ));
-            }
-        });
+        throw Error();
     }
 
-    private getHtmlAndCss(workUnit: AngularWorkUnit): AngularWorkUnit[] {
-        // TODO
-        const dirPath = path.dirname(workUnit.fullPath);
-        const filter = workUnit.label
-            .substring(0, workUnit.label.length - this.pattern.length);
-
-        return glob.sync(`${dirPath}/${filter}**`)
-            .map(file => new AngularWorkUnit(
-                path.basename(file),
-                file,
-                vscode.TreeItemCollapsibleState.None,
-                {
-                    command: 'openWorkFile',
-                    title: '',
-                    arguments: [file]
-                }));
+    private pathExist(p: string) {
+        try {
+            fs.accessSync(p);
+        } catch (err) {
+            return false;
+        }
+    
+        return true;
     }
 }
 
