@@ -1,4 +1,3 @@
-import { readFileSync } from "fs";
 import * as ts from "typescript";
 
 export class AstParser {

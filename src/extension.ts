@@ -5,13 +5,13 @@ import { AngularViewDataProvider } from './angular-view-provider';
 
 export function activate(context: vscode.ExtensionContext) {
     console.log("myextension is now activate");
-    const ws_folders = vscode.workspace.workspaceFolders;
     const angular_json: string = 'angular.json';
 
-    if (ws_folders) {
-        for (const folder of ws_folders) {
-            if (pathExist(path.join(folder.name, angular_json))) {
-                var viewDataProvider = new AngularViewDataProvider(folder.name);
+    if (vscode.workspace.workspaceFolders) {
+        for (const workspace of vscode.workspace.workspaceFolders) {
+            const filePath = workspace.uri.fsPath;
+            if (pathExist(path.join(filePath, angular_json))) {
+                var viewDataProvider = new AngularViewDataProvider(filePath);
                 vscode.window.registerTreeDataProvider('angularView', viewDataProvider);
 
                 vscode.commands.registerCommand('angularView.ShowWorkUnit', () => {
@@ -26,6 +26,7 @@ export function activate(context: vscode.ExtensionContext) {
                     vscode.workspace.openTextDocument(filePath)
                         .then(doc => vscode.window.showTextDocument(doc));
                 });
+                break;
             }
         }
     }
