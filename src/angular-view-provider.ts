@@ -14,51 +14,66 @@ export class AngularViewDataProvider implements vscode.TreeDataProvider<AngularW
         private rootPath: string
     ) { }
 
-    _onDidChangeTreeData: vscode.EventEmitter<AngularWorkUnit | undefined> =
-        new vscode.EventEmitter<AngularWorkUnit | undefined>();
-    onDidChangeTreeData: vscode.Event<AngularWorkUnit | undefined> =
-        this._onDidChangeTreeData.event;
-    fresh() {
-        // TODO
-        throw Error();
+    _onDidChangeTreeData: vscode.EventEmitter<AngularWorkUnit | undefined> = new vscode.EventEmitter<AngularWorkUnit | undefined>();
+    onDidChangeTreeData: vscode.Event<AngularWorkUnit | undefined> = this._onDidChangeTreeData.event;
+
+    fresh(element?: AngularWorkUnit) {
+        this._onDidChangeTreeData.fire(element);
     }
+
     getTreeItem(element: AngularWorkUnit): vscode.TreeItem | Thenable<vscode.TreeItem> {
         return element;
     }
+
     getChildren(element?: AngularWorkUnit): Thenable<AngularWorkUnit[]> {
-        // TODO
         return new Promise(resolve => {
             if (element) {
-                resolve(this.getHtmlAndCss(element));
+                resolve(this.getChildrenWorkUnit(element));
             } else {
                 resolve(
                     glob.sync(`${this.rootPath}/**/*${this.pattern}`)
-                        .map(fullPath => new AngularWorkUnit(
-                            path.basename(fullPath),
-                            fullPath,
-                            vscode.TreeItemCollapsibleState.Collapsed)
-                        )
+                        .map(fullPath => this.getBaseWorkUnit(fullPath))
                 );
             }
         });
     }
 
-    private getHtmlAndCss(workUnit: AngularWorkUnit): AngularWorkUnit[] {
-        const metaData = this.parser.extract(workUnit.label, 
-                fs.readFileSync(workUnit.fullPath).toString());
-        const dirPath = path.dirname(workUnit.fullPath);
-        const fullPath = (x: string) => path.join(dirPath, x);
-        const children: string[] = [];
-        
-        if(metaData?.templateUrl) {
-            children.push(fullPath(metaData.templateUrl));
+    private getBaseWorkUnit(fullPath: string): AngularWorkUnit {
+        const dirPath = path.dirname(fullPath);
+        const basename = path.basename(fullPath);
+        const metaData = this.parser.extract(basename, fs.readFileSync(fullPath).toString());
+
+        const getfullPath = (x: string) => path.join(dirPath, x);
+
+        if (!metaData) {
+            return new AngularWorkUnit(
+                basename,
+                fullPath,
+                vscode.TreeItemCollapsibleState.Collapsed
+            );
         }
 
-        if(metaData?.styleUrls) {
-            metaData.styleUrls.forEach((v, i) => children.push(fullPath(v)));
+        let workUnit = new AngularWorkUnit(
+            metaData.selector,
+            fullPath,
+            vscode.TreeItemCollapsibleState.Collapsed
+        );
+        workUnit.isRoot = true; //TODO
+        workUnit.children.push(fullPath);
+
+        if (metaData?.templateUrl) {
+            workUnit.children.push(getfullPath(metaData.templateUrl));
         }
 
-        return children.map(fullpath => new AngularWorkUnit(
+        if (metaData?.styleUrls) {
+            metaData.styleUrls.forEach((v, i) => workUnit.children.push(getfullPath(v)));
+        }
+
+        return workUnit;
+    }
+
+    private getChildrenWorkUnit(baseUnit: AngularWorkUnit): AngularWorkUnit[] {
+        return baseUnit.children.map(fullpath => new AngularWorkUnit(
             path.basename(fullpath),
             fullpath,
             vscode.TreeItemCollapsibleState.None,
@@ -90,5 +105,10 @@ class AngularWorkUnit extends vscode.TreeItem {
         public readonly command?: vscode.Command
     ) {
         super(label, collapsibleState);
+        this.dirPath = path.dirname(fullPath);
     }
+
+    isRoot: boolean = true;
+    dirPath: string;
+    children: string[] = [];
 }

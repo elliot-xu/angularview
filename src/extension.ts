@@ -4,7 +4,6 @@ import * as fs from 'fs';
 import { AngularViewDataProvider } from './angular-view-provider';
 
 export function activate(context: vscode.ExtensionContext) {
-    console.log("myextension is now activate");
     const angular_json: string = 'angular.json';
 
     if (vscode.workspace.workspaceFolders) {
