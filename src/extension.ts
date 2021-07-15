@@ -3,13 +3,13 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { AngularViewDataProvider } from './angular-view-provider';
 
-export function activate(context: vscode.ExtensionContext) {
-    const angular_json: string = 'angular.json';
+const ANGULAR_JSON: string = 'angular.json';
 
+export function activate(context: vscode.ExtensionContext) {
     if (vscode.workspace.workspaceFolders) {
         for (const workspace of vscode.workspace.workspaceFolders) {
             const filePath = workspace.uri.fsPath;
-            if (pathExist(path.join(filePath, angular_json))) {
+            if (pathExist(path.join(filePath, ANGULAR_JSON))) {
                 var viewDataProvider = new AngularViewDataProvider(filePath);
                 vscode.window.registerTreeDataProvider('angularView', viewDataProvider);
 

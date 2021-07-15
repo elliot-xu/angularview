@@ -1,18 +1,19 @@
-import * as vscode from 'vscode';
 import * as path from 'path';
-import * as fs from 'fs';
+import * as vscode from 'vscode';
 import * as glob from 'glob';
 import { AstParser } from './ast-parser';
+import * as fs from 'fs';
+
+const PATTERN: string = '.component.ts';
 
 export class AngularViewDataProvider implements vscode.TreeDataProvider<AngularWorkUnit> {
 
-    private readonly pattern: string = '.component.ts';
-    private readonly angular_json: string = 'angular.json';
     private readonly parser: AstParser = new AstParser();
+    private searchPattern: string;
 
-    constructor(
-        private rootPath: string
-    ) { }
+    constructor(rootPath: string) { 
+        this.searchPattern = `${rootPath}/**/*${PATTERN}`;
+    }
 
     _onDidChangeTreeData: vscode.EventEmitter<AngularWorkUnit | undefined> = new vscode.EventEmitter<AngularWorkUnit | undefined>();
     onDidChangeTreeData: vscode.Event<AngularWorkUnit | undefined> = this._onDidChangeTreeData.event;
@@ -31,7 +32,7 @@ export class AngularViewDataProvider implements vscode.TreeDataProvider<AngularW
                 resolve(this.getChildrenWorkUnit(element));
             } else {
                 resolve(
-                    glob.sync(`${this.rootPath}/**/*${this.pattern}`)
+                    glob.sync(this.searchPattern)
                         .map(fullPath => this.getBaseWorkUnit(fullPath))
                 );
             }
@@ -58,7 +59,7 @@ export class AngularViewDataProvider implements vscode.TreeDataProvider<AngularW
             fullPath,
             vscode.TreeItemCollapsibleState.Collapsed
         );
-        workUnit.isRoot = true; //TODO
+
         workUnit.children.push(fullPath);
 
         if (metaData?.templateUrl) {
@@ -79,20 +80,10 @@ export class AngularViewDataProvider implements vscode.TreeDataProvider<AngularW
             vscode.TreeItemCollapsibleState.None,
             {
                 command: 'openWorkFile',
-                title: '',
+                title: 'open',
                 arguments: [fullpath]
             }
         ));
-    }
-
-    private pathExist(p: string) {
-        try {
-            fs.accessSync(p);
-        } catch (err) {
-            return false;
-        }
-
-        return true;
     }
 }
 
@@ -101,14 +92,13 @@ class AngularWorkUnit extends vscode.TreeItem {
     constructor(
         public readonly label: string,
         public readonly fullPath: string,
-        public readonly collapsibleState: vscode.TreeItemCollapsibleState,
+        public readonly collapsibleState?: vscode.TreeItemCollapsibleState,
         public readonly command?: vscode.Command
     ) {
-        super(label, collapsibleState);
+        super(vscode.Uri.parse(fullPath), collapsibleState);
         this.dirPath = path.dirname(fullPath);
     }
 
-    isRoot: boolean = true;
     dirPath: string;
     children: string[] = [];
 }
