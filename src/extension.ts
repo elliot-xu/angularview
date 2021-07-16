@@ -13,10 +13,6 @@ export function activate(context: vscode.ExtensionContext) {
                 var viewDataProvider = new AngularViewDataProvider(filePath);
                 vscode.window.registerTreeDataProvider('angularView', viewDataProvider);
 
-                vscode.commands.registerCommand('angularView.ShowWorkUnit', () => {
-                    vscode.window.showInformationMessage('Start loading...');
-                });
-
                 vscode.commands.registerCommand('angularView.RefreshWorkUnit', () => {
                     viewDataProvider.fresh();
                 });

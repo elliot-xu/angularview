@@ -50,7 +50,7 @@ export class AngularViewDataProvider implements vscode.TreeDataProvider<AngularW
             return new AngularWorkUnit(
                 basename,
                 fullPath,
-                vscode.TreeItemCollapsibleState.Collapsed
+                vscode.TreeItemCollapsibleState.None
             );
         }
 

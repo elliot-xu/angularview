@@ -1,7 +1,7 @@
 {
   "name": "angular-view",
   "displayName": "angular-view",
-  "description": "a new view to show the combined html, css, spec files of one component",
+  "description": "a new tree view to show the combined html, css files of one component",
   "version": "0.0.1",
   "publisher": "ms-vscode",
   "engines": {
@@ -11,7 +11,7 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:angularView.ShowWorkUnit"
+    "onView:angularView"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -25,14 +25,21 @@
     },
     "commands": [
       {
-        "command": "angularView.ShowWorkUnit",
-        "title": "AngularView: Show work unit"
-      },
-      {
         "command": "angularView.RefreshWorkUnit",
-        "title": "AngularView: Refresh work unit"
+        "title": "AngularView: Refresh work unit",
+        "shortTitle": "Refresh",
+        "icon": "$(refresh)"
       }
-    ]
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "angularView.RefreshWorkUnit",
+          "when": "view == angularView",
+          "group": "navigation"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
